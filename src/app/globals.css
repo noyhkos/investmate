@@ -1,26 +1,173 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-surface: var(--surface);
+  --color-ground: var(--ground);
+  --color-rule: var(--rule);
+  --color-text-secondary: var(--text-secondary);
+  --color-ink-plot: var(--ink-plot);
+  --color-rise-text: var(--rise-text);
+  --color-fall-text: var(--fall-text);
+  --color-gain-text: var(--gain-text);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  color-scheme: light;
+
+  /* Planes. The tile surface IS the fixed chart surface, so an inline
+     sparkline canvas has no visible edge and can bleed to the tile bounds.
+     The page ground steps away by 1.10 -- enough to read, too little to box.
+     Surfaces and UI ink are fully neutral. The chart-derived tokens below
+     (border, rule) keep their warmth because they ARE chart chrome -- the
+     borrowing is the point, and neutralising them would break it. */
+  --ground: #f0f0f0;
+  --background: #f0f0f0;
+  --surface: #fcfcfb;
+  --card: #fcfcfb;
+  --popover: #ffffff;
+  --secondary: #fcfcfb;
+  --muted: #fcfcfb;
+  --accent: #f5f5f5;
+
+  /* Lines are borrowed from chart chrome verbatim: a UI rule cannot compete
+     with a chart rule if it is the same value. */
+  --border: #c3c2b7;
+  --input: #c3c2b7;
+  --rule: #e1e0d9;
+
+  /* Ink. Every step verified >=4.5:1 on all three planes above. */
+  --foreground: #0b0b0b;
+  --card-foreground: #0b0b0b;
+  --popover-foreground: #0b0b0b;
+  --secondary-foreground: #0b0b0b;
+  --accent-foreground: #0b0b0b;
+  --text-secondary: #484848;
+  --muted-foreground: #676767;
+
+  /* Sparkline ink sits deliberately low so the CAGR figure wins on contrast;
+     it cannot win on area (a sparkline outweighs it ~40x in footprint). */
+  --ink-plot: #787878;
+
+  /* Ink is the accent. Active states and focus rings carry no hue at all --
+     every unused chromatic slot collided with a series or a direction colour. */
+  --primary: #0b0b0b;
+  --primary-foreground: #f0f0f0;
+  --ring: #0b0b0b;
+
+  /* Direction, stepped for TEXT. The canonical hexes stay on chart lines and
+     arrow glyphs, where the 3:1 graphical threshold applies. */
+  --rise-text: #c8352f;
+  --fall-text: #2565b8;
+  --gain-text: #0a7d0a;
+  --destructive: #c8352f;
+
+  --radius: 0.3125rem;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --ground: #0a0a0a;
+  --background: #0a0a0a;
+  --surface: #1a1a19;
+  --card: #1a1a19;
+  --popover: #262626;
+  --secondary: #1a1a19;
+  --muted: #1a1a19;
+  --accent: #1f1f1f;
+
+  --border: #383835;
+  --input: #383835;
+  --rule: #2c2c2a;
+
+  /* Selected against the dark planes, not inverted: the light muted step is
+     #676767 and this is #999999 -- neither is the other's mirror. */
+  --foreground: #ffffff;
+  --card-foreground: #ffffff;
+  --popover-foreground: #ffffff;
+  --secondary-foreground: #ffffff;
+  --accent-foreground: #ffffff;
+  --text-secondary: #b2b2b2;
+  --muted-foreground: #999999;
+
+  --ink-plot: #787878;
+
+  --primary: #ffffff;
+  --primary-foreground: #0a0a0a;
+  --ring: #ffffff;
+
+  --rise-text: #e66767;
+  --fall-text: #3987e5;
+  --gain-text: #2eb62e;
+  --destructive: #e66767;
+}
+
+@theme {
+  --font-sans:
+    var(--font-geist-sans), "Pretendard Variable", Pretendard, system-ui,
+    sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Korean wraps on syllables by default, which splits words mid-token.
+   keep-all restores word-level wrapping across the whole site. */
+:lang(ko) {
+  word-break: keep-all;
 }
