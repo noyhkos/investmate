@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
 import { CHART_CHROME, SERIES_DARK, SERIES_LIGHT } from "@/lib/chart-theme";
+import { useHydrated } from "@/lib/use-hydrated";
 
 export interface ChartTheme {
   mode: "light" | "dark";
@@ -18,13 +18,11 @@ export interface ChartTheme {
  */
 export function useChartTheme(): ChartTheme {
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const hydrated = useHydrated();
 
-  useEffect(() => setMounted(true), []);
-
-  // Before mount the resolved theme is unknown; light avoids a dark flash
-  // on the server-rendered markup.
-  const mode = mounted && resolvedTheme === "dark" ? "dark" : "light";
+  // Before hydration the resolved theme is unknown; light avoids a dark
+  // flash on the server-rendered markup.
+  const mode = hydrated && resolvedTheme === "dark" ? "dark" : "light";
 
   return {
     mode,

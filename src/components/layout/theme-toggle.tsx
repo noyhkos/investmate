@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useHydrated } from "@/lib/use-hydrated";
 
 const OPTIONS = [
   { value: "light", label: "라이트", Icon: Sun },
@@ -13,17 +13,15 @@ const OPTIONS = [
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
   // The resolved theme is unknown on the server; rendering the real state
-  // before mount would flag the wrong option for a frame.
-  useEffect(() => setMounted(true), []);
+  // before hydration would flag the wrong option for a frame.
+  const hydrated = useHydrated();
 
   return (
     <ToggleGroup
       type="single"
       size="sm"
-      value={mounted ? theme : undefined}
+      value={hydrated ? theme : undefined}
       onValueChange={(next) => next && setTheme(next)}
       aria-label="테마"
     >

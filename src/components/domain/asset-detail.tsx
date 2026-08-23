@@ -1,0 +1,104 @@
+"use client";
+
+import { useMemo } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import type { Time } from "lightweight-charts";
+
+import { LineChart } from "@/components/chart/line-chart";
+import { useChartTheme } from "@/components/chart/use-chart-theme";
+import { ScopePicker } from "@/components/domain/scope-picker";
+import { ViewToggles } from "@/components/domain/view-toggles";
+import { BoardError } from "@/components/domain/board-error";
+import { DeltaValue, MetricLine } from "@/components/ds";
+import { Skeleton } from "@/components/ui/skeleton";
+import { formatCagr, formatPrice, formatTotalReturn } from "@/lib/format";
+import { guessCurrency } from "@/lib/market/currency";
+import { guessType } from "@/lib/market/symbols";
+import { useBoard } from "@/lib/use-board";
+import { useViewOptions } from "@/lib/use-view-options";
+import { useWatchlist } from "@/lib/watchlist-store";
+
+/**
+ * One asset, full width. Same controls as the board so a reading carries over
+ * from the grid rather than resetting.
+ */
+export function AssetDetail({ symbol }: { symbol: string }) {
+  const [options, setOptions] = useViewOptions();
+  const { items } = useWatchlist();
+  const theme = useChartTheme();
+
+  const asset = useMemo(
+    () =>
+      items.find((i) => i.symbol === symbol) ?? {
+        symbol,
+        name: symbol,
+        type: guessType(symbol),
+        currency: guessCurrency(symbol),
+        group: "",
+      },
+    [items, symbol],
+  );
+
+  const { board, loading, error, reload } = useBoard([asset], options);
+  const series = board?.series[0];
+
+  const chartSeries = useMemo(() => {
+    if (!series) return [];
+    return [
+      {
+        key: series.symbol,
+        color: theme.series[0],
+        data: series.candles.map((c) => ({ time: c.date as Time, value: c.close })),
+      },
+    ];
+  }, [series, theme.series]);
+
+  return (
+    <div className="flex flex-col gap-5 px-4 py-5 md:px-6">
+      <Link
+        href="/dashboard"
+        className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1.5 text-[0.75rem]"
+      >
+        <ArrowLeft className="size-3.5" aria-hidden />
+        대시보드
+      </Link>
+
+      <div>
+        <h1 className="text-foreground text-[1.125rem] font-medium">{asset.name}</h1>
+        <div className="mt-1 flex items-baseline gap-3">
+          <span className="text-foreground text-[1.25rem] tabular-nums">
+            {series?.summary ? formatPrice(series.summary.endPrice, series.currency) : "—"}
+          </span>
+          {series?.summary ? <DeltaValue change={series.summary.dayChange} /> : null}
+        </div>
+      </div>
+
+      <div className="bg-card rounded-[var(--radius)] p-2">
+        {error ? (
+          <BoardError message={error} onRetry={reload} />
+        ) : loading && !series ? (
+          <Skeleton className="h-[380px] w-full" />
+        ) : (
+          <LineChart series={chartSeries} log={options.log} height={380} />
+        )}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+        <ScopePicker value={options.scope} onChange={(scope) => setOptions({ scope })} />
+        <ViewToggles value={options} onChange={setOptions} />
+      </div>
+
+      {series?.summary ? (
+        <MetricLine
+          className="text-[0.75rem]"
+          items={[
+            { value: `${series.summary.from} ~ ${series.summary.to}` },
+            { label: "총", value: formatTotalReturn(series.summary.totalReturn) },
+            { label: "연평균", value: formatCagr(series.summary.cagr) },
+          ]}
+        />
+      ) : null}
+    </div>
+  );
+}

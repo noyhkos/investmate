@@ -2,6 +2,8 @@ import YahooFinance from "yahoo-finance2";
 
 import type { Candle } from "@/lib/types/asset";
 
+export { guessType } from "./symbols";
+
 // v4 exports a class; one shared instance keeps the cookie/crumb handshake warm.
 const yahoo = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
 
