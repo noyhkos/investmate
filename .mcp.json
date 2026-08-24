@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "uipin": {
+      "command": "node",
+      "args": ["./node_modules/uipin-mcp/dist/server.js", "."]
+    }
+  }
+}

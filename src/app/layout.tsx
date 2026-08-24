@@ -7,6 +7,7 @@ import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SITE } from "@/lib/seo";
+import { UipinMount } from "./uipin-mount";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -55,6 +56,7 @@ export default function RootLayout({
         <ThemeProvider>
           <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
+        {process.env.NODE_ENV === "development" && <UipinMount />}
       </body>
     </html>
   );
