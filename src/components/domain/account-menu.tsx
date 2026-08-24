@@ -14,7 +14,8 @@ export function AccountMenu({ email }: { email: string | null }) {
   if (!email) {
     return (
       <Button asChild variant="ghost" size="sm" className="cursor-pointer gap-1.5">
-        <Link href="/login">
+        {/* Also dynamic — it redirects when a session already exists. */}
+        <Link href="/login" prefetch={false}>
           <LogIn className="size-3.5" aria-hidden />
           로그인
         </Link>

@@ -108,6 +108,13 @@ export function AssetTile({
   return (
     <Link
       href={`/asset/${encodeURIComponent(symbol)}`}
+      // A watchlist is a list to scan, not a menu to work through: nobody
+      // opens all eight. Prefetching every visible tile cost ten server
+      // renders per page load, each one a session check and a Supabase
+      // query. It bought nothing either — the detail route is dynamic, so a
+      // prefetched tile still fetched its payload on click; measured four
+      // times, four times it did.
+      prefetch={false}
       className="focus-visible:ring-ring cursor-pointer rounded-[var(--radius)] focus-visible:ring-2 focus-visible:outline-none"
     >
       {body}
