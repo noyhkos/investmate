@@ -74,7 +74,7 @@ export function AssetDetail({ symbol }: { symbol: string }) {
         <h1 className="text-foreground text-[1.125rem] font-medium">{asset.name}</h1>
         <div className="mt-1 flex items-baseline gap-3">
           <span className="text-foreground text-[1.25rem] tabular-nums">
-            {series?.summary ? formatPrice(series.summary.endPrice, series.currency) : "—"}
+            {series?.summary ? formatPrice(series.summary.endPrice, series.currency, asset.type) : "—"}
           </span>
           {series?.summary ? <DeltaValue change={series.summary.dayChange} /> : null}
         </div>

@@ -1,7 +1,9 @@
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { fetchDailyCandles } from "@/lib/market/yahoo";
 import { MACRO_SYMBOLS } from "@/lib/market/symbols";
+import type { AssetType } from "@/lib/types/asset";
 import { summarize } from "@/lib/metrics/returns";
+import { formatPrice } from "@/lib/format";
 
 // Daily bars change once a session; a hot cache keeps the strip off the
 // provider's rate limit and out of the page's critical path.
@@ -11,6 +13,8 @@ interface MacroReading {
   name: string;
   price: number;
   change: number;
+  currency: string;
+  type: AssetType;
 }
 
 async function readMacro(): Promise<MacroReading[]> {
@@ -19,7 +23,7 @@ async function readMacro(): Promise<MacroReading[]> {
   from.setDate(from.getDate() - 14);
 
   const readings = await Promise.all(
-    MACRO_SYMBOLS.map(async ({ symbol, name }) => {
+    MACRO_SYMBOLS.map(async ({ symbol, name, currency, type }) => {
       try {
         const candles = await fetchDailyCandles(symbol, {
           from: from.toISOString().slice(0, 10),
@@ -27,7 +31,7 @@ async function readMacro(): Promise<MacroReading[]> {
         });
         const summary = summarize(candles);
         if (!summary) return null;
-        return { name, price: summary.endPrice, change: summary.dayChange };
+        return { name, price: summary.endPrice, change: summary.dayChange, currency, type };
       } catch {
         // One unavailable symbol must not blank the whole strip.
         return null;
@@ -53,7 +57,9 @@ export async function MacroStrip() {
         {readings.map((r) => (
           <div key={r.name} className="flex shrink-0 items-baseline gap-1.5">
             <span className="text-muted-foreground">{r.name}</span>
-            <span className="tabular-nums text-foreground">{formatPrice(r.price)}</span>
+            <span className="tabular-nums text-foreground">
+              {formatPrice(r.price, r.currency, r.type)}
+            </span>
             <span className="text-text-secondary tabular-nums">
               {/* Only the glyph is tinted. Nine tiles of saturated numerals would
                   spend the whole colour budget on today's move, in a tool whose
@@ -68,12 +74,4 @@ export async function MacroStrip() {
       </div>
     </header>
   );
-}
-
-function formatPrice(value: number): string {
-  const digits = value >= 1000 ? 0 : 2;
-  return value.toLocaleString("ko-KR", {
-    minimumFractionDigits: digits,
-    maximumFractionDigits: digits,
-  });
 }

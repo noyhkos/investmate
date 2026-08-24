@@ -27,11 +27,13 @@ export interface AssetTileProps {
 /**
  * One asset at a glance, in three lines of text and a plot.
  *
- * CAGR is the headline rather than total return because listing dates
- * differ — +412% over twenty years and +389% over fifteen are not
- * comparable, 8.4%/yr and 11.2%/yr are. The ticker, start year and total
- * return all sit at label size beside the figures they qualify, so the plot
- * gets the height instead of a fourth and fifth line of text.
+ * Price leads, because that is the number people arrive looking for. CAGR
+ * sits under it at a size that still reads as a figure rather than a label:
+ * it is the only number on the tile that compares across assets, since
+ * listing dates differ and +412% over twenty years and +389% over fifteen
+ * are not comparable while 8.4%/yr and 11.2%/yr are. The start year and
+ * total return stay at label size beside it, so the plot keeps its height
+ * instead of a fourth and fifth line of text.
  *
  * The tile has a fill and its only border is the type hairline, and that
  * fill is exactly the chart surface, so the sparkline bleeds to the edges
@@ -73,16 +75,16 @@ export function AssetTile({
       </div>
 
       <div className="flex items-baseline justify-between gap-2 px-3.5">
-        <span className="text-foreground text-[0.9375rem] tabular-nums">
-          {summary ? formatPrice(summary.endPrice, currency) : "—"}
+        <span className="text-foreground text-[1.75rem] leading-none font-medium tracking-tight tabular-nums">
+          {summary ? formatPrice(summary.endPrice, currency, type) : "—"}
         </span>
         {summary ? <DeltaValue change={summary.dayChange} className="text-[0.75rem]" /> : null}
       </div>
 
       <div className="flex items-baseline justify-between gap-2 px-3.5">
-        <span className="flex items-baseline gap-1.5">
+        <span className="flex items-baseline gap-1">
           <span className="text-muted-foreground text-[0.6875rem]">연</span>
-          <span className="text-foreground text-[1.75rem] leading-none font-medium tracking-tight tabular-nums">
+          <span className="text-foreground text-[1rem] font-medium tabular-nums">
             {summary ? formatCagr(summary.cagr) : "—"}
           </span>
         </span>

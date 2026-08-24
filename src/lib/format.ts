@@ -1,16 +1,40 @@
+import type { AssetType } from "@/lib/types/asset";
+
 /**
  * Every number the user reads goes through here. Formatting lives in one
  * place because a price, a percentage and a CAGR must never disagree about
  * digits or locale.
  */
 
-export function formatPrice(value: number, currency = "USD"): string {
+/**
+ * Korean writing puts the won after the number and foreign currency marks
+ * before it, so the affix carries a side rather than just a string.
+ */
+const CURRENCY_AFFIX: Record<string, { prefix?: string; suffix?: string }> = {
+  KRW: { suffix: "원" },
+  USD: { prefix: "$" },
+  JPY: { prefix: "¥" },
+  EUR: { prefix: "€" },
+  GBP: { prefix: "£" },
+  CNY: { prefix: "¥" },
+};
+
+export function formatPrice(
+  value: number,
+  currency = "USD",
+  /** An index is a level, not an amount — it carries no unit at all. */
+  type?: AssetType,
+): string {
   const digits = pickDigits(value);
   const formatted = value.toLocaleString("ko-KR", {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   });
-  return currency === "KRW" ? `${formatted}원` : formatted;
+
+  if (type === "index") return formatted;
+  const affix = CURRENCY_AFFIX[currency];
+  if (!affix) return `${formatted} ${currency}`;
+  return `${affix.prefix ?? ""}${formatted}${affix.suffix ?? ""}`;
 }
 
 /** Ratio in, signed percentage out. 0.0142 -> "1.42%" */
