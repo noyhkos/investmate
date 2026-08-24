@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, X } from "lucide-react";
@@ -19,30 +21,62 @@ interface SortableAssetTileProps extends Omit<AssetTileProps, "controls"> {
  * should not have to declare an intention first. The tile stays a link to
  * its detail page, so both controls stop the click from reaching it.
  *
- * Dragging is bound to the grip rather than the whole cell, precisely
- * because the cell is a link. Measured on a real drag, the trailing click
- * lands on whatever the pointer went down on: with the listeners on the
- * wrapper that was the link, and releasing a drag opened the detail page.
- * On the grip it is the grip, and dnd-kit has already marked the event
- * defaultPrevented by then — so the drag path needs no guard of its own.
+ * Dragging is bound to the grip rather than the whole cell, because the cell
+ * is a link and one set of pixels cannot be both a drag target and a click
+ * target without one of them feeling broken.
  *
- * `swallow` is still required for the plain-click path: a press with no
- * movement never activates the sensor, so nothing else stops that click
- * from reaching the link.
+ * Two separate paths have to be stopped from reaching that link, and each
+ * needs its own handler:
+ *
+ * `swallow` covers a press that never moved. The sensor does not activate
+ * under 4px, so nothing else intervenes and the click must be cancelled
+ * where it lands.
+ *
+ * `guardClick` covers the click that trails a real drag. When the drop
+ * lands outside the tile's own slot the list reorders and the tile's DOM
+ * moves, and the trailing click then reaches the link rather than being
+ * handled by the button it started on. Dropping in place reorders nothing
+ * and does not show the bug, which is what made it look intermittent.
+ * Catching it in the capture phase, above the link, works regardless of
+ * which element ends up receiving it.
  */
 export function SortableAssetTile({ onRemove, ...tile }: SortableAssetTileProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: tile.symbol });
+
+  const draggedRef = useRef(false);
+
+  useEffect(() => {
+    if (isDragging) {
+      draggedRef.current = true;
+      return;
+    }
+    if (!draggedRef.current) return;
+    // A drag can end without any click — dropped outside, cancelled with
+    // Escape. Clearing on a timer keeps the flag from swallowing the next
+    // real click; a click that does arrive clears it first.
+    const timer = setTimeout(() => {
+      draggedRef.current = false;
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [isDragging]);
 
   function swallow(event: React.MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
   }
 
+  function guardClick(event: React.MouseEvent) {
+    if (!draggedRef.current) return;
+    draggedRef.current = false;
+    swallow(event);
+  }
+
   return (
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
+      onClickCapture={guardClick}
       className={cn("relative", isDragging && "z-10 opacity-80")}
     >
       <AssetTile
