@@ -11,7 +11,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { guessCurrency } from "@/lib/market/currency";
 import type { AssetType } from "@/lib/types/asset";
 import type { WatchedAsset } from "@/lib/watchlist-store";
 
@@ -20,6 +19,7 @@ interface Hit {
   name: string;
   exchange: string;
   type: AssetType;
+  currency: string;
 }
 
 interface AddAssetDialogProps {
@@ -124,7 +124,7 @@ export function AddAssetDialog({ open, onOpenChange, groups, onAdd }: AddAssetDi
                       symbol: hit.symbol,
                       name: hit.name,
                       type: hit.type,
-                      currency: guessCurrency(hit.symbol),
+                      currency: hit.currency,
                       group,
                     });
                     onOpenChange(false);
@@ -137,8 +137,8 @@ export function AddAssetDialog({ open, onOpenChange, groups, onAdd }: AddAssetDi
                   <span className="text-muted-foreground shrink-0 text-[0.6875rem] tabular-nums">
                     {hit.symbol}
                   </span>
-                  <span className="text-muted-foreground w-12 shrink-0 text-right text-[0.6875rem]">
-                    {TYPE_LABEL[hit.type]}
+                  <span className="text-muted-foreground w-14 shrink-0 text-right text-[0.6875rem]">
+                    {hit.exchange || TYPE_LABEL[hit.type]}
                   </span>
                 </button>
               </li>

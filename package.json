@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "sync:krx": "node scripts/sync-krx.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
