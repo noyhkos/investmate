@@ -18,8 +18,8 @@ export interface AssetTileProps {
   closes: number[];
   summary: PerformanceSummary | null;
   className?: string;
-  /** Rendered top-right; used by edit mode for the remove control. */
-  action?: React.ReactNode;
+  /** Reorder and remove controls, rendered after the type label. */
+  controls?: React.ReactNode;
   interactive?: boolean;
   log?: boolean;
 }
@@ -45,7 +45,7 @@ export function AssetTile({
   closes,
   summary,
   className,
-  action,
+  controls,
   interactive = true,
   log = false,
 }: AssetTileProps) {
@@ -62,11 +62,10 @@ export function AssetTile({
         <span className="text-foreground min-w-0 flex-1 truncate text-[0.8125rem] font-medium">
           {name}
         </span>
-        {action ?? (
-          <span className="text-muted-foreground shrink-0 text-[0.6875rem]">
-            {ASSET_TYPE_LABEL[type]}
-          </span>
-        )}
+        <span className="text-muted-foreground shrink-0 text-[0.6875rem]">
+          {ASSET_TYPE_LABEL[type]}
+        </span>
+        {controls}
       </div>
 
       <div className="flex items-baseline justify-between gap-2 px-3.5">

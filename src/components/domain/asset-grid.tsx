@@ -17,7 +17,6 @@ import {
 } from "@dnd-kit/sortable";
 
 import { AddAssetTile } from "@/components/domain/add-asset-tile";
-import { AssetTile } from "@/components/domain/asset-tile";
 import { SortableAssetTile } from "@/components/domain/sortable-asset-tile";
 import type { WatchedAsset } from "@/lib/watchlist-store";
 import type { BoardSeries } from "@/lib/market/board";
@@ -25,7 +24,6 @@ import type { BoardSeries } from "@/lib/market/board";
 interface AssetGridProps {
   assets: WatchedAsset[];
   seriesBySymbol: Record<string, BoardSeries | undefined>;
-  editing: boolean;
   log: boolean;
   onRemove: (symbol: string) => void;
   onReorder: (next: WatchedAsset[]) => void;
@@ -41,7 +39,6 @@ const COLUMNS = "grid gap-3 sm:grid-cols-2 lg:grid-cols-3";
 export function AssetGrid({
   assets,
   seriesBySymbol,
-  editing,
   log,
   onRemove,
   onReorder,
@@ -61,46 +58,27 @@ export function AssetGrid({
     onReorder(arrayMove(assets, from, to));
   }
 
-  if (editing) {
-    return (
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={assets.map((a) => a.symbol)} strategy={rectSortingStrategy}>
-          <div className={COLUMNS}>
-            {assets.map((asset) => (
-              <SortableAssetTile
-                key={asset.symbol}
-                symbol={asset.symbol}
-                name={asset.name}
-                type={asset.type}
-                currency={asset.currency}
-                closes={closesOf(seriesBySymbol[asset.symbol])}
-                summary={seriesBySymbol[asset.symbol]?.summary ?? null}
-                log={log}
-                onRemove={onRemove}
-              />
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
-    );
-  }
-
   return (
-    <div className={COLUMNS}>
-      {assets.map((asset) => (
-        <AssetTile
-          key={asset.symbol}
-          symbol={asset.symbol}
-          name={asset.name}
-          type={asset.type}
-          currency={asset.currency}
-          closes={closesOf(seriesBySymbol[asset.symbol])}
-          summary={seriesBySymbol[asset.symbol]?.summary ?? null}
-          log={log}
-        />
-      ))}
-      <AddAssetTile onClick={onAdd} />
-    </div>
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={assets.map((a) => a.symbol)} strategy={rectSortingStrategy}>
+        <div className={COLUMNS}>
+          {assets.map((asset) => (
+            <SortableAssetTile
+              key={asset.symbol}
+              symbol={asset.symbol}
+              name={asset.name}
+              type={asset.type}
+              currency={asset.currency}
+              closes={closesOf(seriesBySymbol[asset.symbol])}
+              summary={seriesBySymbol[asset.symbol]?.summary ?? null}
+              log={log}
+              onRemove={onRemove}
+            />
+          ))}
+          <AddAssetTile onClick={onAdd} />
+        </div>
+      </SortableContext>
+    </DndContext>
   );
 }
 

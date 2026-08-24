@@ -23,7 +23,6 @@ export function DashboardView() {
   const [options, setOptions] = useViewOptions();
   const { items, add, remove, reorder } = useWatchlist();
   const { board, loading, error, reload } = useBoard(items, options);
-  const [editing, setEditing] = useState(false);
   const [adding, setAdding] = useState(false);
 
   const seriesBySymbol = useMemo(() => {
@@ -55,7 +54,6 @@ export function DashboardView() {
           <AssetGrid
             assets={items}
             seriesBySymbol={seriesBySymbol}
-            editing={editing}
             log={options.log}
             onRemove={remove}
             onReorder={reorder}
@@ -67,8 +65,6 @@ export function DashboardView() {
       <RemoteControl
         options={options}
         onChange={setOptions}
-        editing={editing}
-        onEditingChange={setEditing}
       />
 
       <AddAssetDialog

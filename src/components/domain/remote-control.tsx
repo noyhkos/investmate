@@ -1,19 +1,14 @@
 "use client";
 
-import { Check, Pencil } from "lucide-react";
-
 import { ScopePicker } from "@/components/domain/scope-picker";
 import { ViewModeSwitch } from "@/components/domain/view-mode-switch";
 import { ViewToggles } from "@/components/domain/view-toggles";
-import { cn } from "@/lib/utils";
 import type { ViewOptions } from "@/lib/types/view";
 
 interface RemoteControlProps {
   options: ViewOptions;
   onChange: (patch: Partial<ViewOptions>) => void;
-  /** Grid-only controls; omitted on the detail page. */
-  editing?: boolean;
-  onEditingChange?: (editing: boolean) => void;
+  /** Grid-only control; omitted on the detail page. */
   showViewMode?: boolean;
 }
 
@@ -29,8 +24,6 @@ interface RemoteControlProps {
 export function RemoteControl({
   options,
   onChange,
-  editing,
-  onEditingChange,
   showViewMode = true,
 }: RemoteControlProps) {
   return (
@@ -42,34 +35,10 @@ export function RemoteControl({
 
         <ViewToggles value={options} onChange={onChange} />
 
-        {showViewMode || onEditingChange ? (
+        {showViewMode ? (
           <>
             <span className="bg-rule hidden h-5 w-px sm:block" aria-hidden />
-            <div className="flex items-center gap-1.5">
-              {showViewMode ? (
-                <ViewModeSwitch value={options.mode} onChange={(mode) => onChange({ mode })} />
-              ) : null}
-              {onEditingChange ? (
-                <button
-                  type="button"
-                  onClick={() => onEditingChange(!editing)}
-                  aria-pressed={editing}
-                  aria-label={editing ? "편집 완료" : "편집"}
-                  className={cn(
-                    "focus-visible:ring-ring cursor-pointer rounded-[2px] p-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none",
-                    editing
-                      ? "bg-foreground text-background"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                >
-                  {editing ? (
-                    <Check className="size-4" aria-hidden />
-                  ) : (
-                    <Pencil className="size-4" aria-hidden />
-                  )}
-                </button>
-              ) : null}
-            </div>
+            <ViewModeSwitch value={options.mode} onChange={(mode) => onChange({ mode })} />
           </>
         ) : null}
       </div>

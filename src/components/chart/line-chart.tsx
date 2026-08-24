@@ -64,9 +64,12 @@ export function LineChart({
       },
       rightPriceScale: {
         borderColor: theme.chrome.axis,
-        // The scale canvas clips its own overflow, so a label centred on the
-        // top edge loses its upper half. Reserving margin keeps the highest
-        // gridline — and its label — inside the canvas.
+        // The scale canvas hides its overflow and labels are drawn centred on
+        // their gridline, so a tick at either edge is rendered as half a
+        // number. entireTextOnly drops those instead of painting them cut;
+        // the margins then keep enough room that a useful label rarely lands
+        // close enough to be dropped.
+        entireTextOnly: true,
         scaleMargins: { top: 0.12, bottom: 0.08 },
       },
       timeScale: { borderColor: theme.chrome.axis, fixLeftEdge: true, fixRightEdge: true },
