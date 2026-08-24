@@ -9,8 +9,11 @@ import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/supabase/env";
  * Server Components cannot write cookies, so without this the access token
  * would expire mid-session and the user would be signed out on the next
  * navigation rather than at any moment they could understand.
+ *
+ * Named `proxy` and living in proxy.ts: Next 16 renamed the middleware
+ * convention, and the old name still builds but warns.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   // Before the project is connected the app still has to run as a guest.
@@ -38,8 +41,8 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Everything except static assets, the image optimiser, and the uipin
-    // queue route — the picker posts without a session and a middleware that
-    // answers with a redirect would make the write silently do nothing.
+    // queue route — the picker posts without a session, and answering it
+    // with a redirect would make the write silently do nothing.
     "/((?!_next/static|_next/image|favicon.ico|api/uipin|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
