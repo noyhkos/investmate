@@ -2,6 +2,7 @@ import "server-only";
 
 import type { User } from "@supabase/supabase-js";
 
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -11,7 +12,7 @@ import { createClient } from "@/lib/supabase/server";
  * the app degrades to guest mode instead of failing to render.
  */
 export async function getUser(): Promise<User | null> {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
+  if (!isSupabaseConfigured()) return null;
 
   try {
     const supabase = await createClient();

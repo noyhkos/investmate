@@ -1,14 +1,13 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/supabase/env";
+
 // Supabase client for Server Components, Route Handlers and Server Actions
 export async function createClient() {
   const cookieStore = await cookies();
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  return createServerClient(SUPABASE_URL!, SUPABASE_PUBLISHABLE_KEY!, {
       cookies: {
         getAll: () => cookieStore.getAll(),
         setAll: (items) => {
@@ -20,7 +19,6 @@ export async function createClient() {
             // Called from a Server Component; middleware refreshes the session.
           }
         },
-      },
     },
-  );
+  });
 }
