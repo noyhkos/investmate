@@ -134,5 +134,9 @@ export function LineChart({
     chart.timeScale().fitContent();
   }, [series, log, percentFormat, priceFormatter]);
 
-  return <div ref={containerRef} className="w-full" />;
+  // The height has to be on the element, not only in the chart options.
+  // lightweight-charts sizes the container from inside an effect, so between
+  // React committing this div and that effect running the box is zero tall —
+  // the page collapses and springs back.
+  return <div ref={containerRef} className="w-full" style={{ height }} />;
 }

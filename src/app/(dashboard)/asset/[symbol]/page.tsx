@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 
 import { AssetDetail } from "@/components/domain/asset-detail";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AssetDetailSkeleton } from "@/components/domain/asset-detail-skeleton";
 import { getSessionData } from "@/lib/session";
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export default async function AssetPage({
   const { userId, assets, settings } = await getSessionData();
 
   return (
-    <Suspense fallback={<Skeleton className="m-4 h-96 md:m-6" />}>
+    <Suspense fallback={<AssetDetailSkeleton />}>
       <AssetDetail
         symbol={decodeURIComponent(symbol)}
         userId={userId}

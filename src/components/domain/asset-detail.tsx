@@ -8,9 +8,9 @@ import type { Time } from "lightweight-charts";
 import { LineChart } from "@/components/chart/line-chart";
 import { useChartTheme } from "@/components/chart/use-chart-theme";
 import { RemoteControl } from "@/components/domain/remote-control";
+import { AssetDetailSkeleton } from "@/components/domain/asset-detail-skeleton";
 import { BoardError } from "@/components/domain/board-error";
 import { DeltaValue, MetricLine } from "@/components/ds";
-import { Skeleton } from "@/components/ui/skeleton";
 import { formatAxisPrice, formatCagr, formatPrice, formatTotalReturn } from "@/lib/format";
 import { guessCurrency } from "@/lib/market/currency";
 import { guessType } from "@/lib/market/symbols";
@@ -68,6 +68,10 @@ export function AssetDetail({ symbol, userId, watchlist, settings }: AssetDetail
     ];
   }, [series, theme.series]);
 
+  // Same shape the route skeleton was showing a moment ago, so the handoff
+  // from the server wait to the client fetch does not flash.
+  if (!error && loading && !series) return <AssetDetailSkeleton />;
+
   return (
     <div className="flex flex-col gap-5 px-4 pt-5 pb-28 md:px-6">
       <Link
@@ -91,8 +95,6 @@ export function AssetDetail({ symbol, userId, watchlist, settings }: AssetDetail
       <div className="bg-card rounded-[var(--radius)] p-2">
         {error ? (
           <BoardError message={error} onRetry={reload} />
-        ) : loading && !series ? (
-          <Skeleton className="h-[380px] w-full" />
         ) : (
           <LineChart
             series={chartSeries}

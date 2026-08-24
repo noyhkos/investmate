@@ -40,8 +40,10 @@ export function Sparkline({
   const [upColor] = useUpColor();
   const clipId = useId();
 
+  // Holds the same height it would draw at. A shorter placeholder collapses
+  // the tile by the difference and springs back when the series arrives.
   if (values.length < 2) {
-    return <div className={cn("h-11", className)} aria-hidden />;
+    return <div className={className} style={{ height }} aria-hidden />;
   }
 
   // On a linear axis a twenty-year series pins every early year to the floor
