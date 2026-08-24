@@ -11,7 +11,7 @@ import { RemoteControl } from "@/components/domain/remote-control";
 import { BoardError } from "@/components/domain/board-error";
 import { DeltaValue, MetricLine } from "@/components/ds";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatCagr, formatPrice, formatTotalReturn } from "@/lib/format";
+import { formatAxisPrice, formatCagr, formatPrice, formatTotalReturn } from "@/lib/format";
 import { guessCurrency } from "@/lib/market/currency";
 import { guessType } from "@/lib/market/symbols";
 import { useBoard } from "@/lib/use-board";
@@ -41,6 +41,13 @@ export function AssetDetail({ symbol }: { symbol: string }) {
 
   const { board, loading, error, reload } = useBoard([asset], options);
   const series = board?.series[0];
+
+  // A KRW price has no meaningful decimals; the library's default renders
+  // 415,000 as "415000.00" and eats axis width doing it.
+  const priceFormatter = useMemo(
+    () => (value: number) => formatAxisPrice(value, series?.currency ?? "USD"),
+    [series?.currency],
+  );
 
   const chartSeries = useMemo(() => {
     if (!series) return [];
@@ -79,7 +86,12 @@ export function AssetDetail({ symbol }: { symbol: string }) {
         ) : loading && !series ? (
           <Skeleton className="h-[380px] w-full" />
         ) : (
-          <LineChart series={chartSeries} log={options.log} height={380} />
+          <LineChart
+            series={chartSeries}
+            log={options.log}
+            height={380}
+            priceFormatter={priceFormatter}
+          />
         )}
       </div>
 

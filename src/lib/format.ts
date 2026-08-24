@@ -29,6 +29,19 @@ export function formatCagr(ratio: number): string {
   return `${ratio >= 0 ? "" : "−"}${Math.abs(ratio * 100).toFixed(1)}%`;
 }
 
+/**
+ * Axis labels are read as a column, so they trade precision for width:
+ * thousands separators, no currency mark, and decimals only where the scale
+ * actually needs them.
+ */
+export function formatAxisPrice(value: number, currency: string): string {
+  const digits = currency === "KRW" ? 0 : pickDigits(value);
+  return value.toLocaleString("en-US", {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
+}
+
 export function formatYear(isoDate: string): string {
   return isoDate.slice(0, 4);
 }

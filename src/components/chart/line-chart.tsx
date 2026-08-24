@@ -26,6 +26,8 @@ interface LineChartProps {
   height?: number;
   /** Percent scale for rebased overlays; plain prices on a detail chart. */
   percentFormat?: boolean;
+  /** Formats the price-axis labels. Defaults to the library's own. */
+  priceFormatter?: (value: number) => string;
 }
 
 /**
@@ -33,7 +35,13 @@ interface LineChartProps {
  * from CSS because the library takes them as JS options and never resolves
  * custom properties — a theme flip has to be pushed in imperatively.
  */
-export function LineChart({ series, log, height = 380, percentFormat }: LineChartProps) {
+export function LineChart({
+  series,
+  log,
+  height = 380,
+  percentFormat,
+  priceFormatter,
+}: LineChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef(new Map<string, ISeriesApi<"Line">>());
@@ -54,7 +62,13 @@ export function LineChart({ series, log, height = 380, percentFormat }: LineChar
         horzLines: { color: theme.chrome.grid },
         vertLines: { visible: false },
       },
-      rightPriceScale: { borderColor: theme.chrome.axis },
+      rightPriceScale: {
+        borderColor: theme.chrome.axis,
+        // The scale canvas clips its own overflow, so a label centred on the
+        // top edge loses its upper half. Reserving margin keeps the highest
+        // gridline — and its label — inside the canvas.
+        scaleMargins: { top: 0.12, bottom: 0.08 },
+      },
       timeScale: { borderColor: theme.chrome.axis, fixLeftEdge: true, fixRightEdge: true },
       crosshair: {
         vertLine: { color: theme.chrome.axis, labelBackgroundColor: theme.chrome.axis },
@@ -103,8 +117,10 @@ export function LineChart({ series, log, height = 380, percentFormat }: LineChar
           priceLineVisible: false,
           lastValueVisible: false,
           priceFormat: percentFormat
-            ? { type: "custom", formatter: (v: number) => `${v.toFixed(0)}` }
-            : undefined,
+            ? { type: "custom", formatter: (v: number) => v.toFixed(0) }
+            : priceFormatter
+              ? { type: "custom", formatter: priceFormatter }
+              : undefined,
         });
         live.set(input.key, api);
       }
@@ -113,7 +129,7 @@ export function LineChart({ series, log, height = 380, percentFormat }: LineChar
     }
 
     chart.timeScale().fitContent();
-  }, [series, log, percentFormat]);
+  }, [series, log, percentFormat, priceFormatter]);
 
   return <div ref={containerRef} className="w-full" />;
 }
