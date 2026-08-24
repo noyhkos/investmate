@@ -17,6 +17,33 @@ const cache = new Map<string, Entry>();
 const inflight = new Map<string, Promise<Candle[]>>();
 
 /**
+ * History splits by how likely it is to change.
+ *
+ * A close from 2020 is settled forever; only the current month has bars that
+ * move. Caching the whole series behind one expiry threw both away together,
+ * so every hour some unlucky request paid to re-download two decades for the
+ * entire watchlist — measured at three seconds and change.
+ *
+ * The archive is keyed by the first of the month, so it is rewritten once a
+ * month and otherwise sits still. The tail covers that boundary to today and
+ * expires on a short clock, which costs a few dozen bars to refresh rather
+ * than a few thousand.
+ */
+const getArchive = unstable_cache(
+  async (symbol: string, until: string) =>
+    fetchDailyCandles(symbol, { from: EPOCH, to: until }),
+  ["market-archive"],
+  { revalidate: 60 * 60 * 24 * 30, tags: ["market-history"] },
+);
+
+const getTail = unstable_cache(
+  async (symbol: string, from: string, to: string) =>
+    fetchDailyCandles(symbol, { from, to }),
+  ["market-tail"],
+  { revalidate: 60 * 15, tags: ["market-history"] },
+);
+
+/**
  * Full daily history for a symbol.
  *
  * Always fetching the whole range rather than the requested window is
@@ -24,31 +51,34 @@ const inflight = new Map<string, Promise<Candle[]>>();
  * full series makes every later scope change — and the MAX-window
  * resolution that needs each asset's first bar — free.
  *
- * Two caches, because they solve different problems. The in-process map
- * collapses the eight tiles of one render into one request per symbol.
- * `unstable_cache` is what survives past the request: a module-level map
- * lives and dies with a serverless instance, so on its own every cold start
- * would re-download decades of bars for the whole watchlist.
+ * The in-process map on top of that collapses the eight tiles of one render
+ * into one call per symbol. It does not survive the request on Vercel, where
+ * consecutive requests land on different instances; the shared cache above
+ * is what carries across them.
  */
-const fetchAndCache = unstable_cache(
-  async (symbol: string) =>
-    fetchDailyCandles(symbol, {
-      from: EPOCH,
-      to: new Date().toISOString().slice(0, 10),
-    }),
-  ["market-history"],
-  { revalidate: 60 * 60, tags: ["market-history"] },
-);
+async function load(symbol: string): Promise<Candle[]> {
+  const now = new Date();
+  const monthStart = `${now.toISOString().slice(0, 7)}-01`;
+  const today = now.toISOString().slice(0, 10);
+
+  const [archive, tail] = await Promise.all([
+    getArchive(symbol, monthStart),
+    getTail(symbol, monthStart, today),
+  ]);
+
+  // The tail wins on any date they share — it is the fresher read.
+  const seen = new Set(tail.map((c) => c.date));
+  return [...archive.filter((c) => !seen.has(c.date)), ...tail];
+}
 
 export async function getFullHistory(symbol: string): Promise<Candle[]> {
   const hit = cache.get(symbol);
   if (hit && Date.now() - hit.fetchedAt < TTL_MS) return hit.candles;
 
-  // Concurrent tiles asking for the same symbol share one request.
   const pending = inflight.get(symbol);
   if (pending) return pending;
 
-  const request = fetchAndCache(symbol)
+  const request = load(symbol)
     .then((candles) => {
       cache.set(symbol, { candles, fetchedAt: Date.now() });
       return candles;
