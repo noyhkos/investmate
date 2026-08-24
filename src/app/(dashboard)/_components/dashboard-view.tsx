@@ -10,18 +10,28 @@ import { RemoteControl } from "@/components/domain/remote-control";
 import { WindowNotice } from "@/components/domain/window-notice";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBoard } from "@/lib/use-board";
+import type { UserSettings } from "@/lib/types/settings";
+import type { WatchedAsset } from "@/lib/watchlist-types";
 import { useViewOptions } from "@/lib/use-view-options";
 import { useWatchlist } from "@/lib/watchlist-store";
 import type { BoardSeries } from "@/lib/market/board";
 
+interface DashboardViewProps {
+  /** Null for a guest; the watchlist then lives in this browser only. */
+  userId: string | null;
+  initialAssets: WatchedAsset[];
+  settings: UserSettings;
+}
+
 /**
- * Owns the watchlist and the fetched board; every child below is presentational.
- * The watchlist lives in the browser for now, which is why the board is fetched
- * from a route handler rather than rendered on the server.
+ * Owns the watchlist and the fetched board; every child below is
+ * presentational. The board is fetched from a route handler rather than
+ * rendered on the server because the guest watchlist only exists in the
+ * browser — the server has nothing to render it from.
  */
-export function DashboardView() {
-  const [options, setOptions] = useViewOptions();
-  const { items, add, remove, reorder } = useWatchlist();
+export function DashboardView({ userId, initialAssets, settings }: DashboardViewProps) {
+  const [options, setOptions] = useViewOptions(settings, userId !== null);
+  const { items, add, remove, reorder } = useWatchlist(userId, initialAssets);
   const { board, loading, error, reload } = useBoard(items, options);
   const [adding, setAdding] = useState(false);
 

@@ -3,7 +3,8 @@
 import { useId } from "react";
 
 import { cn } from "@/lib/utils";
-import { directionTextClass, useUpColor } from "@/lib/direction-preference";
+import { useUpColor } from "@/components/layout/settings-provider";
+import { directionTextClass } from "@/lib/direction-preference";
 
 interface SparklineProps {
   values: number[];

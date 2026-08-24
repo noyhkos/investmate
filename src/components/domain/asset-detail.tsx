@@ -17,14 +17,23 @@ import { guessType } from "@/lib/market/symbols";
 import { useBoard } from "@/lib/use-board";
 import { useViewOptions } from "@/lib/use-view-options";
 import { useWatchlist } from "@/lib/watchlist-store";
+import type { UserSettings } from "@/lib/types/settings";
+import type { WatchedAsset } from "@/lib/watchlist-types";
 
 /**
  * One asset, full width. Same controls as the board so a reading carries over
  * from the grid rather than resetting.
  */
-export function AssetDetail({ symbol }: { symbol: string }) {
-  const [options, setOptions] = useViewOptions();
-  const { items } = useWatchlist();
+interface AssetDetailProps {
+  symbol: string;
+  userId: string | null;
+  watchlist: WatchedAsset[];
+  settings: UserSettings;
+}
+
+export function AssetDetail({ symbol, userId, watchlist, settings }: AssetDetailProps) {
+  const [options, setOptions] = useViewOptions(settings, userId !== null);
+  const { items } = useWatchlist(userId, watchlist);
   const theme = useChartTheme();
 
   const asset = useMemo(
@@ -34,7 +43,6 @@ export function AssetDetail({ symbol }: { symbol: string }) {
         name: symbol,
         type: guessType(symbol),
         currency: guessCurrency(symbol),
-        group: "",
       },
     [items, symbol],
   );

@@ -1,19 +1,16 @@
-import { createClient } from "@/lib/supabase/server";
-import type { WatchlistItem } from "@/lib/types/watchlist";
+import "server-only";
 
-export async function listWatchlist(userId: string): Promise<WatchlistItem[]> {
+import { createClient } from "@/lib/supabase/server";
+import type { WatchedAsset } from "@/lib/watchlist-types";
+
+export async function listWatchlist(): Promise<WatchedAsset[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("watchlist")
-    .select("asset_id, sort_order, note")
-    .eq("user_id", userId)
+    .select("symbol, name, type, currency")
     .order("sort_order");
 
+  // RLS scopes the rows to the caller, so no user filter is needed here.
   if (error) throw error;
-
-  return (data ?? []).map((row) => ({
-    assetId: row.asset_id,
-    sortOrder: row.sort_order,
-    note: row.note,
-  }));
+  return data ?? [];
 }

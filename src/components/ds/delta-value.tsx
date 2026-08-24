@@ -1,7 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { directionTextClass, useUpColor } from "@/lib/direction-preference";
+import { useUpColor } from "@/components/layout/settings-provider";
+import { directionTextClass } from "@/lib/direction-preference";
 import { formatPercent } from "@/lib/format";
 
 interface DeltaValueProps {

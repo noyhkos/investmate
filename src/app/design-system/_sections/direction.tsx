@@ -1,7 +1,7 @@
 "use client";
 
 import { DeltaValue } from "@/components/ds";
-import { useUpColor } from "@/lib/direction-preference";
+import { useUpColor } from "@/components/layout/settings-provider";
 import { cn } from "@/lib/utils";
 
 import { SpecSection } from "../_components/spec-section";

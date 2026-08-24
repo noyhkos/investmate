@@ -1,3 +1,4 @@
+import { AccountMenu } from "@/components/domain/account-menu";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { fetchDailyCandles } from "@/lib/market/yahoo";
 import { MACRO_SYMBOLS } from "@/lib/market/symbols";
@@ -42,15 +43,16 @@ async function readMacro(): Promise<MacroReading[]> {
   return readings.filter((r): r is MacroReading => r !== null);
 }
 
-export async function MacroStrip() {
+export async function MacroStrip({ email }: { email: string | null }) {
   const readings = await readMacro();
 
   return (
     <header className="border-rule border-b">
       <div className="flex items-baseline gap-3 px-4 py-2 md:px-6">
         <span className="font-heading text-sm font-semibold">investmate</span>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
+          <AccountMenu email={email} />
         </div>
       </div>
       <div className="flex gap-5 overflow-x-auto px-4 pb-2 text-xs md:px-6">
