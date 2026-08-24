@@ -58,12 +58,16 @@ export function AssetTile({
         className,
       )}
     >
-      <div className="flex items-baseline gap-2 px-3.5">
-        <span className="text-foreground min-w-0 flex-1 truncate text-[0.8125rem] font-medium">
-          {name}
-        </span>
-        <span className="text-muted-foreground shrink-0 text-[0.6875rem]">
-          {ASSET_TYPE_LABEL[type]}
+      {/* Two layers on purpose: the name and the type share a baseline, which
+          icon buttons cannot join — an icon has no baseline, so a single
+          items-baseline row hangs them below the text. The text group is
+          centred against the controls instead. */}
+      <div className="flex items-center gap-2 px-3.5">
+        <span className="flex min-w-0 flex-1 items-baseline gap-2">
+          <span className="text-foreground truncate text-[0.8125rem] font-medium">{name}</span>
+          <span className="text-muted-foreground shrink-0 text-[0.6875rem]">
+            {ASSET_TYPE_LABEL[type]}
+          </span>
         </span>
         {controls}
       </div>
