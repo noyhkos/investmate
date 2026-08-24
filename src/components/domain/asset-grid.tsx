@@ -68,7 +68,7 @@ export function AssetGrid({
               symbol={asset.symbol}
               name={asset.name}
               type={asset.type}
-              currency={asset.currency}
+              currency={currencyOf(seriesBySymbol[asset.symbol], asset)}
               closes={closesOf(seriesBySymbol[asset.symbol])}
               summary={seriesBySymbol[asset.symbol]?.summary ?? null}
               log={log}
@@ -84,4 +84,17 @@ export function AssetGrid({
 
 function closesOf(series: BoardSeries | undefined): number[] {
   return series?.closes ?? [];
+}
+
+/**
+ * The board's currency, not the watchlist's.
+ *
+ * With the KRW toggle on the server restates a US holding in won, and the
+ * response says so. Reading the currency off the watchlist entry instead
+ * left the figure converted and the mark unchanged — $309.35 became 430,241
+ * still labelled in dollars. Falls back to the asset while the board is
+ * still loading.
+ */
+function currencyOf(series: BoardSeries | undefined, asset: WatchedAsset): string {
+  return series?.currency ?? asset.currency;
 }
