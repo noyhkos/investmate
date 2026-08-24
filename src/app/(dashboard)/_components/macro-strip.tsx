@@ -1,5 +1,6 @@
 import { AccountMenu } from "@/components/domain/account-menu";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { UpColorToggle } from "@/components/layout/up-color-toggle";
 import { fetchDailyCandles } from "@/lib/market/yahoo";
 import { MACRO_SYMBOLS } from "@/lib/market/symbols";
 import type { AssetType } from "@/lib/types/asset";
@@ -51,6 +52,7 @@ export async function MacroStrip({ email }: { email: string | null }) {
       <div className="flex items-baseline gap-3 px-4 py-2 md:px-6">
         <span className="font-heading text-sm font-semibold">investmate</span>
         <div className="ml-auto flex items-center gap-2">
+          <UpColorToggle />
           <ThemeToggle />
           <AccountMenu email={email} />
         </div>

@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { AccountMenu } from "@/components/domain/account-menu";
+import { SessionAccountMenu } from "@/components/domain/session-account-menu";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { SITE } from "@/lib/seo";
 
-export function SiteHeader({ email }: { email: string | null }) {
+export function SiteHeader() {
   return (
     <header className="border-b">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 md:px-6">
@@ -13,7 +13,7 @@ export function SiteHeader({ email }: { email: string | null }) {
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <AccountMenu email={email} />
+          <SessionAccountMenu />
           <Button asChild size="sm">
             <Link href="/dashboard">대시보드</Link>
           </Button>
