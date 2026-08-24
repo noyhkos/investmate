@@ -8,7 +8,7 @@ import { BoardError } from "@/components/domain/board-error";
 import { OverlayView } from "@/components/domain/overlay-view";
 import { RemoteControl } from "@/components/domain/remote-control";
 import { WindowNotice } from "@/components/domain/window-notice";
-import { Skeleton } from "@/components/ui/skeleton";
+import { TileGridSkeleton } from "@/components/domain/tile-skeleton";
 import { useBoard } from "@/lib/use-board";
 import type { UserSettings } from "@/lib/types/settings";
 import type { WatchedAsset } from "@/lib/watchlist-types";
@@ -53,11 +53,7 @@ export function DashboardView({ userId, initialAssets, settings }: DashboardView
         {error ? (
           <BoardError message={error} onRetry={reload} />
         ) : loading && !board ? (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }, (_, i) => (
-              <Skeleton key={i} className="h-46 w-full" />
-            ))}
-          </div>
+          <TileGridSkeleton />
         ) : options.mode === "overlay" ? (
           <OverlayView assets={items} seriesBySymbol={seriesBySymbol} log={options.log} />
         ) : (
