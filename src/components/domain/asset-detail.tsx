@@ -7,8 +7,7 @@ import type { Time } from "lightweight-charts";
 
 import { LineChart } from "@/components/chart/line-chart";
 import { useChartTheme } from "@/components/chart/use-chart-theme";
-import { ScopePicker } from "@/components/domain/scope-picker";
-import { ViewToggles } from "@/components/domain/view-toggles";
+import { RemoteControl } from "@/components/domain/remote-control";
 import { BoardError } from "@/components/domain/board-error";
 import { DeltaValue, MetricLine } from "@/components/ds";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -55,7 +54,7 @@ export function AssetDetail({ symbol }: { symbol: string }) {
   }, [series, theme.series]);
 
   return (
-    <div className="flex flex-col gap-5 px-4 py-5 md:px-6">
+    <div className="flex flex-col gap-5 px-4 pt-5 pb-28 md:px-6">
       <Link
         href="/dashboard"
         className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1.5 text-[0.75rem]"
@@ -84,11 +83,6 @@ export function AssetDetail({ symbol }: { symbol: string }) {
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-        <ScopePicker value={options.scope} onChange={(scope) => setOptions({ scope })} />
-        <ViewToggles value={options} onChange={setOptions} />
-      </div>
-
       {series?.summary ? (
         <MetricLine
           className="text-[0.75rem]"
@@ -99,6 +93,8 @@ export function AssetDetail({ symbol }: { symbol: string }) {
           ]}
         />
       ) : null}
+
+      <RemoteControl options={options} onChange={setOptions} showViewMode={false} />
     </div>
   );
 }

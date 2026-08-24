@@ -8,13 +8,17 @@ import { ScopePicker } from "@/components/domain/scope-picker";
 import { ViewModeSwitch } from "@/components/domain/view-mode-switch";
 import { ViewToggles } from "@/components/domain/view-toggles";
 import { WindowNotice } from "@/components/domain/window-notice";
-import { GroupHeading, MetricFigure, MetricLine } from "@/components/ds";
+import { MetricFigure, MetricLine } from "@/components/ds";
+import { ASSET_TYPE_LABEL } from "@/lib/asset-type";
+import type { AssetType } from "@/lib/types/asset";
 import { DEFAULT_VIEW_OPTIONS, type ViewOptions } from "@/lib/types/view";
 
 import { SpecSection } from "../_components/spec-section";
 
 // A gently compounding series, so the log-scale demo shows a real shape.
 const DEMO = Array.from({ length: 120 }, (_, i) => 100 * Math.exp(i / 55) * (1 + Math.sin(i / 7) * 0.05));
+
+const TILE_TYPES: AssetType[] = ["stock", "etf", "crypto", "metal", "fx", "index"];
 
 const DEMO_SUMMARY = {
   from: "2005-03-14",
@@ -62,22 +66,25 @@ export function ComponentsSection() {
           </div>
         </Demo>
 
-        <Demo label="GroupHeading · WindowNotice">
-          <GroupHeading count={4}>핵심자산</GroupHeading>
+        <Demo label="WindowNotice">
           <WindowNotice from="2014-09-17" to="2026-08-23" limitedBy="비트코인" />
         </Demo>
 
-        <Demo label="AssetTile">
-          <div className="max-w-xs">
-            <AssetTile
-              symbol="VOO"
-              name="S&P 500 (VOO)"
-              currency="USD"
-              closes={DEMO}
-              summary={DEMO_SUMMARY}
-              interactive={false}
-              log={options.log}
-            />
+        <Demo label="AssetTile — 테두리는 종목 성격, 색만으로 의미를 지지 않도록 라벨을 함께 단다">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {TILE_TYPES.map((type) => (
+              <AssetTile
+                key={type}
+                symbol="VOO"
+                name={ASSET_TYPE_LABEL[type]}
+                type={type}
+                currency="USD"
+                closes={DEMO}
+                summary={DEMO_SUMMARY}
+                interactive={false}
+                log={options.log}
+              />
+            ))}
           </div>
         </Demo>
       </div>

@@ -25,7 +25,6 @@ interface Hit {
 interface AddAssetDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  groups: string[];
   onAdd: (asset: WatchedAsset) => void;
 }
 
@@ -38,11 +37,10 @@ const TYPE_LABEL: Record<AssetType, string> = {
   crypto: "코인",
 };
 
-export function AddAssetDialog({ open, onOpenChange, groups, onAdd }: AddAssetDialogProps) {
+export function AddAssetDialog({ open, onOpenChange, onAdd }: AddAssetDialogProps) {
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<Hit[]>([]);
   const [loading, setLoading] = useState(false);
-  const [group, setGroup] = useState(groups[0] ?? "관심종목");
 
   const term = query.trim();
   // Derived rather than stored: clearing the box should hide results without
@@ -125,7 +123,6 @@ export function AddAssetDialog({ open, onOpenChange, groups, onAdd }: AddAssetDi
                       name: hit.name,
                       type: hit.type,
                       currency: hit.currency,
-                      group,
                     });
                     onOpenChange(false);
                   }}
@@ -146,23 +143,6 @@ export function AddAssetDialog({ open, onOpenChange, groups, onAdd }: AddAssetDi
           </ul>
         </div>
 
-        <div className="border-rule flex items-center gap-2 border-t pt-3">
-          <label htmlFor="add-group" className="text-muted-foreground text-[0.75rem]">
-            그룹
-          </label>
-          <Input
-            id="add-group"
-            value={group}
-            onChange={(e) => setGroup(e.target.value)}
-            list="watchlist-groups"
-            className="h-8 w-48 text-[0.8125rem]"
-          />
-          <datalist id="watchlist-groups">
-            {groups.map((g) => (
-              <option key={g} value={g} />
-            ))}
-          </datalist>
-        </div>
       </DialogContent>
     </Dialog>
   );

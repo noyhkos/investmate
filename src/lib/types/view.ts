@@ -15,7 +15,7 @@ export type ViewMode = "grid" | "overlay";
 export interface ViewOptions {
   scope: Scope;
   mode: ViewMode;
-  /** Log scale. On by default — linear hides early years. */
+  /** Log scale. Off by default; linear is what most readers expect first. */
   log: boolean;
   /** Total return: reinvest dividends. */
   dividends: boolean;
@@ -26,9 +26,9 @@ export interface ViewOptions {
 }
 
 export const DEFAULT_VIEW_OPTIONS: ViewOptions = {
-  scope: "MAX",
+  scope: "10Y",
   mode: "grid",
-  log: true,
+  log: false,
   dividends: false,
   krw: false,
   inflation: false,

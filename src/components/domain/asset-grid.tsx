@@ -19,8 +19,7 @@ import {
 import { AddAssetTile } from "@/components/domain/add-asset-tile";
 import { AssetTile } from "@/components/domain/asset-tile";
 import { SortableAssetTile } from "@/components/domain/sortable-asset-tile";
-import { GroupHeading } from "@/components/ds";
-import { groupWatchlist, type WatchedAsset } from "@/lib/watchlist-store";
+import type { WatchedAsset } from "@/lib/watchlist-store";
 import type { BoardSeries } from "@/lib/market/board";
 
 interface AssetGridProps {
@@ -72,6 +71,7 @@ export function AssetGrid({
                 key={asset.symbol}
                 symbol={asset.symbol}
                 name={asset.name}
+                type={asset.type}
                 currency={asset.currency}
                 closes={closesOf(seriesBySymbol[asset.symbol])}
                 summary={seriesBySymbol[asset.symbol]?.summary ?? null}
@@ -86,28 +86,20 @@ export function AssetGrid({
   }
 
   return (
-    <div className="flex flex-col gap-8">
-      {groupWatchlist(assets).map(([group, members]) => (
-        <section key={group} className="flex flex-col gap-3">
-          <GroupHeading count={members.length}>{group || "미분류"}</GroupHeading>
-          <div className={COLUMNS}>
-            {members.map((asset) => (
-              <AssetTile
-                key={asset.symbol}
-                symbol={asset.symbol}
-                name={asset.name}
-                currency={asset.currency}
-                closes={closesOf(seriesBySymbol[asset.symbol])}
-                summary={seriesBySymbol[asset.symbol]?.summary ?? null}
-                log={log}
-              />
-            ))}
-          </div>
-        </section>
+    <div className={COLUMNS}>
+      {assets.map((asset) => (
+        <AssetTile
+          key={asset.symbol}
+          symbol={asset.symbol}
+          name={asset.name}
+          type={asset.type}
+          currency={asset.currency}
+          closes={closesOf(seriesBySymbol[asset.symbol])}
+          summary={seriesBySymbol[asset.symbol]?.summary ?? null}
+          log={log}
+        />
       ))}
-      <div className={COLUMNS}>
-        <AddAssetTile onClick={onAdd} />
-      </div>
+      <AddAssetTile onClick={onAdd} />
     </div>
   );
 }

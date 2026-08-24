@@ -28,7 +28,7 @@ export function SortableAssetTile({ onRemove, ...tile }: SortableAssetTileProps)
       <AssetTile
         {...tile}
         interactive={false}
-        className="border-border border border-dashed"
+        className="border-dashed"
         action={
           <div className="flex items-center gap-0.5">
             <button

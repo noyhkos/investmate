@@ -3,14 +3,17 @@
 import Link from "next/link";
 
 import { Sparkline } from "@/components/chart/sparkline";
-import { DeltaValue, MetricFigure, MetricLine, Plane } from "@/components/ds";
+import { DeltaValue } from "@/components/ds";
+import { ASSET_TYPE_LABEL, assetTypeBorder } from "@/lib/asset-type";
 import { formatCagr, formatPrice, formatTotalReturn, formatYear } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import type { AssetType } from "@/lib/types/asset";
 import type { PerformanceSummary } from "@/lib/types/performance";
 
 export interface AssetTileProps {
   symbol: string;
   name: string;
+  type: AssetType;
   currency: string;
   closes: number[];
   summary: PerformanceSummary | null;
@@ -22,39 +25,48 @@ export interface AssetTileProps {
 }
 
 /**
- * One asset at a glance. CAGR is the headline rather than total return
- * because listing dates differ — +412% over twenty years and +389% over
- * fifteen are not comparable, 8.4%/yr and 11.2%/yr are.
+ * One asset at a glance, in three lines of text and a plot.
  *
- * The tile has a fill and no border, and that fill is exactly the chart
- * surface, so the sparkline can bleed to the edges with no visible canvas
- * seam. Separation from the page comes from the ground stepping away.
+ * CAGR is the headline rather than total return because listing dates
+ * differ — +412% over twenty years and +389% over fifteen are not
+ * comparable, 8.4%/yr and 11.2%/yr are. The ticker, start year and total
+ * return all sit at label size beside the figures they qualify, so the plot
+ * gets the height instead of a fourth and fifth line of text.
+ *
+ * The tile has a fill and its only border is the type hairline, and that
+ * fill is exactly the chart surface, so the sparkline bleeds to the edges
+ * with no visible canvas seam.
  */
 export function AssetTile({
   symbol,
   name,
+  type,
   currency,
   closes,
   summary,
   className,
   action,
   interactive = true,
-  log = true,
+  log = false,
 }: AssetTileProps) {
   const body = (
-    <Plane
+    <div
+      style={{ borderColor: assetTypeBorder(type) }}
       className={cn(
-        "flex flex-col gap-3 overflow-hidden pt-3 pb-0",
+        "bg-card flex flex-col gap-2.5 overflow-hidden rounded-[var(--radius)] border pt-3 pb-0",
         interactive && "hover:bg-accent transition-colors",
         className,
       )}
     >
-      <div className="flex items-start gap-2 px-3.5">
-        <div className="min-w-0 flex-1">
-          <div className="text-foreground truncate text-[0.8125rem] font-medium">{name}</div>
-          <div className="text-muted-foreground mt-0.5 text-[0.6875rem] tabular-nums">{symbol}</div>
-        </div>
-        {action}
+      <div className="flex items-baseline gap-2 px-3.5">
+        <span className="text-foreground min-w-0 flex-1 truncate text-[0.8125rem] font-medium">
+          {name}
+        </span>
+        {action ?? (
+          <span className="text-muted-foreground shrink-0 text-[0.6875rem]">
+            {ASSET_TYPE_LABEL[type]}
+          </span>
+        )}
       </div>
 
       <div className="flex items-baseline justify-between gap-2 px-3.5">
@@ -64,32 +76,26 @@ export function AssetTile({
         {summary ? <DeltaValue change={summary.dayChange} className="text-[0.75rem]" /> : null}
       </div>
 
-      <div className="px-3.5">
-        <MetricFigure
-          label="연"
-          value={summary ? formatCagr(summary.cagr) : "—"}
-        />
-        <MetricLine
-          className="mt-1.5"
-          items={
-            summary
-              ? [
-                  { value: `${formatYear(summary.from)}~` },
-                  { value: formatTotalReturn(summary.totalReturn) },
-                ]
-              : [{ value: "데이터 없음" }]
-          }
-        />
+      <div className="flex items-baseline justify-between gap-2 px-3.5">
+        <span className="flex items-baseline gap-1.5">
+          <span className="text-muted-foreground text-[0.6875rem]">연</span>
+          <span className="text-foreground text-[1.75rem] leading-none font-medium tracking-tight tabular-nums">
+            {summary ? formatCagr(summary.cagr) : "—"}
+          </span>
+        </span>
+        <span className="text-muted-foreground shrink-0 text-[0.6875rem] tabular-nums">
+          {summary ? `${formatYear(summary.from)}~ ${formatTotalReturn(summary.totalReturn)}` : symbol}
+        </span>
       </div>
 
       <Sparkline
         values={closes}
         change={summary?.dayChange ?? 0}
         log={log}
+        height={72}
         label={`${name} 추이`}
-        className="mt-1"
       />
-    </Plane>
+    </div>
   );
 
   if (!interactive) return body;

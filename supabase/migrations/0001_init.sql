@@ -31,15 +31,13 @@ create table prices (
 create table watchlist (
   user_id     uuid not null references auth.users(id) on delete cascade,
   asset_id    uuid not null references assets(id) on delete cascade,
-  -- Free text, not an enum: "핵심자산" / "헤지" beats a fixed taxonomy.
-  "group"     text not null default '',
   sort_order  int not null default 0,
   note        text,
   created_at  timestamptz not null default now(),
   primary key (user_id, asset_id)
 );
 
-create index watchlist_user_order_idx on watchlist (user_id, "group", sort_order);
+create index watchlist_user_order_idx on watchlist (user_id, sort_order);
 
 alter table watchlist enable row level security;
 

@@ -30,7 +30,7 @@ interface SparklineProps {
 export function Sparkline({
   values,
   change,
-  log = true,
+  log = false,
   width = 320,
   height = 44,
   className,

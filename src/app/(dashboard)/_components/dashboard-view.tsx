@@ -2,11 +2,11 @@
 
 import { useMemo, useState } from "react";
 
-import { ControlRow } from "@/app/(dashboard)/_components/control-row";
 import { AddAssetDialog } from "@/components/domain/add-asset-dialog";
 import { AssetGrid } from "@/components/domain/asset-grid";
 import { BoardError } from "@/components/domain/board-error";
 import { OverlayView } from "@/components/domain/overlay-view";
+import { RemoteControl } from "@/components/domain/remote-control";
 import { WindowNotice } from "@/components/domain/window-notice";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBoard } from "@/lib/use-board";
@@ -32,21 +32,11 @@ export function DashboardView() {
     return map;
   }, [board]);
 
-  const groups = useMemo(
-    () => [...new Set(items.map((i) => i.group).filter(Boolean))],
-    [items],
-  );
-
   return (
     <>
-      <ControlRow
-        options={options}
-        onChange={setOptions}
-        editing={editing}
-        onEditingChange={setEditing}
-      />
-
-      <div className="flex flex-col gap-5 px-4 py-5 md:px-6">
+      {/* Bottom padding clears the floating remote so the last tile is
+          never trapped underneath it. */}
+      <div className="flex flex-col gap-5 px-4 pt-5 pb-28 md:px-6">
         {board ? (
           <WindowNotice from={board.from} to={board.to} limitedBy={board.limitedBy} />
         ) : null}
@@ -74,10 +64,16 @@ export function DashboardView() {
         )}
       </div>
 
+      <RemoteControl
+        options={options}
+        onChange={setOptions}
+        editing={editing}
+        onEditingChange={setEditing}
+      />
+
       <AddAssetDialog
         open={adding}
         onOpenChange={setAdding}
-        groups={groups}
         onAdd={add}
       />
     </>
