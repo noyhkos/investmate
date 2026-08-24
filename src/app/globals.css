@@ -108,16 +108,17 @@
 
   --radius: 0.3125rem;
 
-  /* Asset-type hairlines. Deliberately low chroma: the grid's colour budget
-     belongs to the direction arrows, and a saturated border would outshout
-     both them and the plot. Never the sole carrier — every tile also names
-     its type in text. */
-  --type-stock: #9db6d4;
-  --type-etf: #94c4b2;
-  --type-crypto: #dfb08e;
-  --type-metal: #d3bd85;
-  --type-fx: #b4aad8;
-  --type-index: #c3c2b7;
+  /* Asset-type borders. Held around 3.5:1 — a 2px line at that strength is
+     told apart at a glance without becoming a field of colour, so the grid's
+     budget still belongs to the direction arrows. The first pass sat near
+     2:1, which is legible as a line but not as a hue. Never the sole
+     carrier: every tile also names its type in text. */
+  --type-stock: #4a86c8;
+  --type-etf: #2f9673;
+  --type-crypto: #c9762f;
+  --type-metal: #ad8420;
+  --type-fx: #8b7bd4;
+  --type-index: #8f8d84;
 }
 
 .dark {
@@ -157,12 +158,12 @@
   --gain-text: #2eb62e;
   --destructive: #e66767;
 
-  --type-stock: #3f5470;
-  --type-etf: #33574a;
-  --type-crypto: #6b4a33;
-  --type-metal: #635530;
-  --type-fx: #4a4270;
-  --type-index: #383835;
+  --type-stock: #5b9de0;
+  --type-etf: #35a37e;
+  --type-crypto: #d98a45;
+  --type-metal: #c39a34;
+  --type-fx: #9c8ee2;
+  --type-index: #7a7871;
 }
 
 @theme {

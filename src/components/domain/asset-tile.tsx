@@ -53,7 +53,7 @@ export function AssetTile({
     <div
       style={{ borderColor: assetTypeBorder(type) }}
       className={cn(
-        "bg-card flex flex-col gap-2.5 overflow-hidden rounded-[var(--radius)] border pt-3 pb-0",
+        "bg-card flex flex-col gap-2.5 overflow-hidden rounded-[var(--radius)] border-2 pt-3 pb-0",
         interactive && "hover:bg-accent transition-colors",
         className,
       )}

@@ -20,19 +20,19 @@ export function ColorTokensSection() {
         <SwatchRow token="--ink-plot" role="스파크라인" light="#787878" dark="#787878" note="면적으로 못 이기니 대비를 눌러 숫자에 양보" />
       </SwatchTable>
 
-      <h3 className="text-foreground mt-8 text-[0.8125rem] font-medium">종목 성격 헤어라인</h3>
+      <h3 className="text-foreground mt-8 text-[0.8125rem] font-medium">종목 성격 테두리</h3>
       <p className="text-muted-foreground mt-1.5 mb-4 max-w-2xl text-[0.75rem] leading-relaxed">
-        타일 테두리에만 쓰는 유일한 유채색이다. 채도를 낮게 눌러 그리드의 색 예산(등락 화살표)과
-        스파크라인을 침범하지 않게 했다. 타일 대비 1.8~2.4:1 — 선으로는 읽히고 면으로는 안 읽히는 구간.
+        타일 테두리에만 쓰는 유일한 유채색이다. 2px에 타일 대비 3.2~3.9:1 — 한눈에 색이 구분되되
+        면으로 번지지는 않는 지점. 처음엔 1px에 2:1로 잡았는데 선으로는 보여도 색이 구분되지 않았다.
         색이 단독으로 의미를 지지 않도록 타일마다 성격을 글자로도 적는다.
       </p>
       <SwatchTable>
-        <SwatchRow token="--type-stock" role="주식" light="#9db6d4" dark="#3f5470" note="2.03 / 2.25" />
-        <SwatchRow token="--type-etf" role="ETF" light="#94c4b2" dark="#33574a" note="1.89 / 2.16" />
-        <SwatchRow token="--type-crypto" role="코인" light="#dfb08e" dark="#6b4a33" note="1.90 / 2.20" />
-        <SwatchRow token="--type-metal" role="귀금속" light="#d3bd85" dark="#635530" note="1.80 / 2.38" />
-        <SwatchRow token="--type-fx" role="환율" light="#b4aad8" dark="#4a4270" note="2.11 / 1.91" />
-        <SwatchRow token="--type-index" role="지수" light="#c3c2b7" dark="#383835" note="기본 border와 동일" />
+        <SwatchRow token="--type-stock" role="주식" light="#4a86c8" dark="#5b9de0" note="3.70 / 6.09" />
+        <SwatchRow token="--type-etf" role="ETF" light="#2f9673" dark="#35a37e" note="3.57 / 5.55" />
+        <SwatchRow token="--type-crypto" role="코인" light="#c9762f" dark="#d98a45" note="3.34 / 6.36" />
+        <SwatchRow token="--type-metal" role="귀금속" light="#ad8420" dark="#c39a34" note="3.35 / 6.63" />
+        <SwatchRow token="--type-fx" role="환율" light="#8b7bd4" dark="#9c8ee2" note="3.48 / 6.12" />
+        <SwatchRow token="--type-index" role="지수" light="#8f8d84" dark="#7a7871" note="3.24 / 3.94" />
       </SwatchTable>
     </SpecSection>
   );
