@@ -1,5 +1,3 @@
-import type { Candle } from "@/lib/types/asset";
-
 export interface IndexedPoint {
   date: string;
   /** Rebased value; the window's first close is 100. */
@@ -11,11 +9,11 @@ export interface IndexedPoint {
  * $258 on one axis is unreadable, and a second axis is never the answer.
  * The base moves with the window, so changing scope re-bases every series.
  */
-export function rebaseTo100(candles: Candle[]): IndexedPoint[] {
-  if (candles.length === 0) return [];
-  const base = candles[0].close;
+export function rebaseTo100(dates: string[], closes: number[]): IndexedPoint[] {
+  if (closes.length === 0) return [];
+  const base = closes[0];
   if (base <= 0) return [];
-  return candles.map((c) => ({ date: c.date, value: (c.close / base) * 100 }));
+  return closes.map((close, i) => ({ date: dates[i], value: (close / base) * 100 }));
 }
 
 /**

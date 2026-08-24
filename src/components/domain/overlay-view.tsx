@@ -38,8 +38,8 @@ export function OverlayView({ assets, seriesBySymbol, log }: OverlayViewProps) {
     return assets.flatMap((asset) => {
       const color = colors.get(asset.symbol);
       if (!color || hidden.has(asset.symbol)) return [];
-      const candles = seriesBySymbol[asset.symbol]?.candles ?? [];
-      const points = rebaseTo100(candles);
+      const series = seriesBySymbol[asset.symbol];
+      const points = rebaseTo100(series?.dates ?? [], series?.closes ?? []);
       if (points.length === 0) return [];
       return [
         {

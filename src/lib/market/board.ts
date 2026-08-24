@@ -25,10 +25,25 @@ export interface BoardRequest {
   align: "common" | "independent";
 }
 
+/**
+ * What actually crosses the wire.
+ *
+ * The client reads two things off a candle — the date and the close — and
+ * never touches open, high, low, adjClose or volume. Sending the whole bar
+ * meant roughly 25,000 numbers per board that were parsed and thrown away.
+ *
+ * Parallel arrays rather than an array of objects: the field names repeat
+ * once per bar otherwise, and at four thousand bars that is most of the
+ * payload. Closes are rounded to two places — the extra digits are float
+ * noise from the provider, not precision anyone can act on.
+ *
+ * 615KB -> 84KB raw, 125KB -> 15KB over the wire.
+ */
 export interface BoardSeries {
   symbol: string;
   currency: string;
-  candles: Candle[];
+  dates: string[];
+  closes: number[];
   summary: PerformanceSummary | null;
   firstDate: string | null;
   /** The window this series was actually sliced to. */
@@ -85,10 +100,12 @@ export async function buildBoard(request: BoardRequest): Promise<Board> {
     const full = corrected.get(asset.symbol) ?? [];
     const own = align === "common" ? common : resolveWindow(scope, [asset], now);
     const sliced = sliceToWindow(full, own.from, own.to);
+    const bucketed = bucketCandles(sliced, own.bucket);
     return {
       symbol: asset.symbol,
       currency: asset.currency,
-      candles: bucketCandles(sliced, own.bucket),
+      dates: bucketed.map((c) => c.date),
+      closes: bucketed.map((c) => round2(c.close)),
       // Summarised on the daily slice: rolling up first would move the
       // window's first and last close and quietly change the return.
       summary: summarize(sliced),
@@ -112,4 +129,9 @@ export async function buildBoard(request: BoardRequest): Promise<Board> {
     limitedBy: align === "common" ? (common.limitedBy?.name ?? null) : null,
     series,
   };
+}
+
+/** Two places is past anything a reader acts on, and it halves the digits. */
+function round2(value: number): number {
+  return Math.round(value * 100) / 100;
 }

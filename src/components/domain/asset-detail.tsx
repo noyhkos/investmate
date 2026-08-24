@@ -63,7 +63,7 @@ export function AssetDetail({ symbol, userId, watchlist, settings }: AssetDetail
       {
         key: series.symbol,
         color: theme.series[0],
-        data: series.candles.map((c) => ({ time: c.date as Time, value: c.close })),
+        data: series.closes.map((close, i) => ({ time: series.dates[i] as Time, value: close })),
       },
     ];
   }, [series, theme.series]);

@@ -83,5 +83,5 @@ export function AssetGrid({
 }
 
 function closesOf(series: BoardSeries | undefined): number[] {
-  return series ? series.candles.map((c) => c.close) : [];
+  return series?.closes ?? [];
 }
