@@ -22,17 +22,18 @@ export function ColorTokensSection() {
 
       <h3 className="text-foreground mt-8 text-[0.8125rem] font-medium">종목 성격 테두리</h3>
       <p className="text-muted-foreground mt-1.5 mb-4 max-w-2xl text-[0.75rem] leading-relaxed">
-        타일 테두리에만 쓰는 유일한 유채색이다. 2px에 타일 대비 3.2~3.9:1 — 한눈에 색이 구분되되
-        면으로 번지지는 않는 지점. 처음엔 1px에 2:1로 잡았는데 선으로는 보여도 색이 구분되지 않았다.
+        타일 테두리에만 쓰는 유일한 유채색이다. 규칙은 하나 — <b>테두리는 감싸는 그래프보다 항상 약해야
+        한다.</b> 스파크라인 잉크가 라이트 4.30 / 다크 3.94이므로 테두리는 그 아래인 2.5~2.7 / 3.1~3.7에
+        둔다. 두 번 틀렸다: 1px에 2:1은 선은 보여도 색을 이름 부를 수 없었고, 3.5:1은 그래프를 덮었다.
         색이 단독으로 의미를 지지 않도록 타일마다 성격을 글자로도 적는다.
       </p>
       <SwatchTable>
-        <SwatchRow token="--type-stock" role="주식" light="#4a86c8" dark="#5b9de0" note="3.70 / 6.09" />
-        <SwatchRow token="--type-etf" role="ETF" light="#2f9673" dark="#35a37e" note="3.57 / 5.55" />
-        <SwatchRow token="--type-crypto" role="코인" light="#c9762f" dark="#d98a45" note="3.34 / 6.36" />
-        <SwatchRow token="--type-metal" role="귀금속" light="#ad8420" dark="#c39a34" note="3.35 / 6.63" />
-        <SwatchRow token="--type-fx" role="환율" light="#8b7bd4" dark="#9c8ee2" note="3.48 / 6.12" />
-        <SwatchRow token="--type-index" role="지수" light="#8f8d84" dark="#7a7871" note="3.24 / 3.94" />
+        <SwatchRow token="--type-stock" role="주식" light="#7ba0c4" dark="#4d6b8a" note="2.67 / 3.14" />
+        <SwatchRow token="--type-etf" role="ETF" light="#6fa895" dark="#417a68" note="2.65 / 3.49" />
+        <SwatchRow token="--type-crypto" role="코인" light="#c69a72" dark="#8f6746" note="2.47 / 3.48" />
+        <SwatchRow token="--type-metal" role="귀금속" light="#b8a066" dark="#877044" note="2.48 / 3.68" />
+        <SwatchRow token="--type-fx" role="환율" light="#9d94c6" dark="#6b6494" note="2.73 / 3.21" />
+        <SwatchRow token="--type-index" role="지수" light="#a8a69d" dark="#6a6862" note="2.15 / 3.13" />
       </SwatchTable>
     </SpecSection>
   );
